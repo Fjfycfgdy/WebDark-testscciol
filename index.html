@@ -3,537 +3,524 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebDark — آزمون آنلاین</title>
+    <title>WebDark | آزمون آنلاین</title>
     <style>
         :root {
             --bg: #0a0f1f;
-            --card: rgba(18, 25, 55, 0.75);
-            --accent: #5f8aff;
+            --card: rgba(18,25,55,0.85);
+            --accent: #58a6ff;
             --green: #3fb950;
             --red: #f85149;
-            --yellow: #d2991d;
             --text: #eef3ff;
             --text2: #8b949e;
-            --border: rgba(100, 150, 255, 0.2);
-            --radius: 1.2rem;
+            --radius: 14px;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-family: Tahoma, sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
+            padding: 12px;
             overflow-x: hidden;
         }
 
         #particles {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; z-index: 0; pointer-events: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
         }
 
         .container {
             max-width: 480px;
             margin: 0 auto;
-            padding: 1.5rem;
             position: relative;
-            z-index: 2;
+            z-index: 1;
         }
 
-        .screen { display: none; animation: fadeIn 0.4s ease; }
-        .screen.active { display: block; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .screen { display: none; }
+        .screen.active { display: block; animation: fadeIn 0.35s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .card {
             background: var(--card);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(10px);
             border-radius: var(--radius);
-            padding: 1.5rem;
-            border: 1px solid var(--border);
-            margin-bottom: 1rem;
+            padding: 18px;
+            border: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 10px;
         }
 
         .logo {
             text-align: center;
-            font-size: 2.5rem;
+            font-size: 26px;
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            margin-bottom: 15px;
         }
         .logo span { color: var(--accent); }
 
         input {
-            width: 100%; padding: 12px;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--border);
-            border-radius: 10px; color: var(--text);
-            font-size: 14px; text-align: center;
-            margin-bottom: 10px; outline: none;
+            width: 100%;
+            padding: 13px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 10px;
+            outline: none;
         }
         input:focus { border-color: var(--accent); }
 
         button {
-            width: 100%; padding: 12px; border: none;
-            border-radius: 10px; font-size: 14px;
-            font-weight: bold; cursor: pointer;
-            color: white; margin-top: 5px;
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #fff;
+            margin-top: 6px;
+            transition: 0.2s;
         }
-        button:active { transform: scale(0.97); }
-
-        .btn-primary { background: var(--green); }
-        .btn-danger { background: var(--red); }
-        .btn-accent { background: var(--accent); }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text);
-        }
+        button:active { transform: scale(0.96); }
+        .btn-green { background: var(--green); }
+        .btn-red { background: var(--red); }
+        .btn-blue { background: var(--accent); }
+        .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text); }
 
         .timer {
-            font-size: 2rem; font-weight: bold;
-            text-align: center; padding: 1rem;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            padding: 12px;
             color: var(--green);
         }
-        .timer.warning { color: var(--yellow); }
+        .timer.warning { color: #d2991d; }
         .timer.danger { color: var(--red); }
 
         .options {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px; margin: 1rem 0;
+            gap: 8px;
+            margin: 12px 0;
         }
-
         .opt-btn {
-            padding: 16px; background: var(--card);
-            border: 2px solid var(--border);
-            border-radius: 10px; color: var(--text);
-            font-size: 16px; font-weight: bold;
-            cursor: pointer; text-align: center;
+            padding: 16px;
+            background: var(--card);
+            border: 2px solid rgba(255,255,255,0.12);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
         }
-        .opt-btn.selected {
-            background: var(--green);
-            border-color: var(--green);
-            color: white;
-        }
+        .opt-btn.selected { background: var(--green); border-color: var(--green); }
 
         .nav-row {
-            display: flex; gap: 8px;
-            align-items: center; margin: 1rem 0;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin: 12px 0;
         }
-        .nav-row button {
-            flex: 1; background: var(--card);
-            color: var(--text); border: 1px solid var(--border);
-        }
-        .nav-row input { width: 50px; margin: 0; }
+        .nav-row button { flex: 1; background: var(--card); border: 1px solid rgba(255,255,255,0.15); color: #fff; }
+        .nav-row input { width: 50px; margin: 0; padding: 11px; }
 
         .exam-card {
-            background: var(--card); border-radius: var(--radius);
-            padding: 1rem; border: 1px solid var(--border);
-            margin-bottom: 8px; cursor: pointer;
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: 0.2s;
         }
         .exam-card:hover { border-color: var(--accent); }
-        .exam-card h3 { margin-bottom: 4px; }
-        .exam-card small { color: var(--text2); }
+        .exam-card h3 { margin-bottom: 4px; font-size: 15px; }
+        .exam-card p { font-size: 11px; color: var(--text2); margin-top: 3px; }
 
         .header {
-            display: flex; justify-content: space-between;
-            align-items: center; margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
         }
-        .header button { width: auto; padding: 8px 16px; }
+        .header h2 { font-size: 16px; }
+        .header button { width: auto; padding: 8px 16px; font-size: 12px; }
 
         .banner {
-            background: linear-gradient(135deg, var(--accent), #9147ff);
-            color: white; padding: 1rem;
-            border-radius: var(--radius); text-align: center;
-            margin: 1rem 0; font-weight: bold;
+            background: linear-gradient(135deg, #3b6eff, #9147ff);
+            color: #fff;
+            padding: 12px;
+            border-radius: var(--radius);
+            text-align: center;
+            margin: 12px 0;
+            font-weight: bold;
+            font-size: 13px;
         }
 
-        .pdf-viewer {
-            width: 100%; height: 350px;
-            border-radius: var(--radius); margin-bottom: 1rem;
-            border: 1px solid var(--border); background: #000;
+        .pdf-frame {
+            width: 100%;
+            height: 280px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255,255,255,0.08);
+            background: #000;
+            margin-bottom: 12px;
         }
 
-        .footer {
-            text-align: center; font-size: 10px;
-            color: var(--text2); margin-top: 1rem;
+        .status { text-align: center; margin-top: 8px; font-size: 12px; min-height: 18px; }
+        .status.error { color: var(--red); }
+        .status.success { color: var(--green); }
+        .status.info { color: var(--text2); }
+
+        .result-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
     </style>
 </head>
 <body>
 
-    <canvas id="particles"></canvas>
+<canvas id="particles"></canvas>
 
-    <div class="container">
+<div class="container">
 
-        <!-- LOGIN -->
-        <div class="screen active" id="loginScreen">
-            <div class="card" style="text-align:center;">
-                <div class="logo">🌙 Web<span>Dark</span></div>
-                <p style="color:var(--text2);margin-bottom:1.5rem;">سامانه هوشمند آزمون آنلاین</p>
-                <input type="text" id="loginUser" placeholder="نام کاربری">
-                <input type="password" id="loginPass" placeholder="رمز عبور">
-                <button class="btn-primary" onclick="doLogin()">ورود به آزمون</button>
-                <p id="loginMsg" style="margin-top:8px;font-size:12px;color:var(--text2);"></p>
-            </div>
-            <div class="banner">
-                📱 <span style="cursor:pointer;text-decoration:underline;" onclick="alert('APK به زودی!')">دانلود نسخه اندروید (APK)</span>
-            </div>
-            <p class="footer">© 2026 Oraxel WebDark</p>
+    <!-- LOGIN -->
+    <div class="screen active" id="loginScreen">
+        <div class="card">
+            <div class="logo">🌙 Web<span>Dark</span></div>
+            <p style="text-align:center;color:var(--text2);margin-bottom:15px;">سامانه هوشمند آزمون آنلاین</p>
+            <input type="text" id="loginUser" placeholder="نام کاربری" autocomplete="off">
+            <input type="password" id="loginPass" placeholder="رمز عبور" autocomplete="off">
+            <button class="btn-green" onclick="doLogin()">ورود به آزمون</button>
+            <p class="status" id="loginMsg"></p>
         </div>
-
-        <!-- EXAMS -->
-        <div class="screen" id="examsScreen">
-            <div class="header">
-                <h3 id="welcomeText">👤 کاربر</h3>
-                <button class="btn-outline" onclick="doLogout()">خروج</button>
-            </div>
-            <div id="examsList"></div>
-            <div class="banner">
-                📱 <span style="cursor:pointer;text-decoration:underline;" onclick="alert('APK به زودی!')">نسخه APK</span> با ضد تقلب حرفه‌ای!
-            </div>
+        <div class="banner">
+            📱 <span style="cursor:pointer;text-decoration:underline;" onclick="alert('نسخه APK به زودی!')">دانلود نسخه اندروید</span> — ضد تقلب + ارسال خودکار نتایج
         </div>
-
-        <!-- EXAM -->
-        <div class="screen" id="examScreen">
-            <div class="timer" id="timer">00:00:00</div>
-            <p style="text-align:center;margin-bottom:1rem;" id="qLabel">سوال ۱ از ۱۰</p>
-            <iframe id="pdfViewer" class="pdf-viewer" src=""></iframe>
-            <div class="options">
-                <button class="opt-btn" onclick="selOpt(1)">۱</button>
-                <button class="opt-btn" onclick="selOpt(2)">۲</button>
-                <button class="opt-btn" onclick="selOpt(3)">۳</button>
-                <button class="opt-btn" onclick="selOpt(4)">۴</button>
-            </div>
-            <div class="nav-row">
-                <button onclick="prevQ()">◀</button>
-                <input type="number" id="qNum" value="1" onchange="goQ()">
-                <button onclick="nextQ()">▶</button>
-            </div>
-            <button class="btn-danger" onclick="endExam()">🏁 اتمام آزمون</button>
-            <button class="btn-accent" style="margin-top:8px;" onclick="backToExams()">↩ بازگشت</button>
-        </div>
-
-        <!-- RESULT -->
-        <div class="screen" id="resultScreen">
-            <div class="card" style="text-align:center;">
-                <h2>📊 نتایج آزمون</h2>
-                <div id="resultContent"></div>
-                <button class="btn-primary" onclick="backToExams()">باشه</button>
-                <button class="btn-accent" style="margin-top:8px;" onclick="downloadJSON()">📥 دانلود نتایج</button>
-            </div>
-        </div>
-
+        <p style="text-align:center;font-size:9px;color:var(--text2);">© 2026 Oraxel WebDark</p>
     </div>
 
-    <script>
-        // ====== PARTICLES ======
-        (function() {
-            var c = document.getElementById('particles');
-            var ctx = c.getContext('2d');
-            var p = [];
-            function rs() { c.width = window.innerWidth; c.height = window.innerHeight; }
-            rs();
-            window.addEventListener('resize', rs);
+    <!-- EXAMS -->
+    <div class="screen" id="examsScreen">
+        <div class="header">
+            <h2 id="welcomeText">👤 کاربر</h2>
+            <button class="btn-outline" onclick="doLogout()">🚪 خروج</button>
+        </div>
+        <div id="examsList"></div>
+        <div class="banner">
+            📱 <span style="cursor:pointer;text-decoration:underline;" onclick="alert('APK به زودی!')">نسخه APK</span> — تجربه بهتر!
+        </div>
+    </div>
 
-            function Pt() {
-                this.x = Math.random() * c.width;
-                this.y = Math.random() * c.height;
-                this.s = Math.random() * 2 + 0.5;
-                this.vx = (Math.random() - 0.5) * 0.3;
-                this.vy = (Math.random() - 0.5) * 0.3;
-                this.o = Math.random() * 0.4 + 0.1;
-            }
-            Pt.prototype.up = function() {
-                this.x += this.vx; this.y += this.vy;
-                if (this.x < 0 || this.x > c.width) this.vx *= -1;
-                if (this.y < 0 || this.y > c.height) this.vy *= -1;
-            };
-            Pt.prototype.dr = function() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.s, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(120,160,255,' + this.o + ')';
-                ctx.fill();
-            };
+    <!-- EXAM -->
+    <div class="screen" id="examScreen">
+        <div class="timer" id="timer">00:00:00</div>
+        <p style="text-align:center;margin-bottom:8px;font-weight:bold;" id="qLabel">سوال ۱ از ۱۰</p>
+        <iframe class="pdf-frame" id="pdfFrame" src=""></iframe>
+        <div class="options">
+            <button class="opt-btn" onclick="sel(1)">۱</button>
+            <button class="opt-btn" onclick="sel(2)">۲</button>
+            <button class="opt-btn" onclick="sel(3)">۳</button>
+            <button class="opt-btn" onclick="sel(4)">۴</button>
+        </div>
+        <div class="nav-row">
+            <button onclick="prev()">◀</button>
+            <input type="number" id="qNum" value="1" onchange="jump()">
+            <button onclick="next()">▶</button>
+        </div>
+        <button class="btn-red" onclick="end()">🏁 اتمام آزمون</button>
+        <button class="btn-outline" style="margin-top:6px;" onclick="back()">↩ بازگشت</button>
+    </div>
 
-            for (var i = 0; i < 50; i++) p.push(new Pt());
+    <!-- RESULT -->
+    <div class="screen" id="resultScreen">
+        <div class="card" style="text-align:center;">
+            <h2 style="margin-bottom:12px;">📊 نتایج آزمون</h2>
+            <div id="resultContent"></div>
+            <button class="btn-green" onclick="back()" style="margin-top:12px;">✅ باشه</button>
+            <button class="btn-blue" style="margin-top:6px;" onclick="downloadJSON()">📥 دانلود نتایج</button>
+        </div>
+    </div>
 
-            function anim() {
-                ctx.clearRect(0, 0, c.width, c.height);
-                for (var i = 0; i < p.length; i++) { p[i].up(); p[i].dr(); }
-                requestAnimationFrame(anim);
-            }
-            anim();
-        })();
+</div>
 
-        // ====== STATE ======
-        var S = {
-            user: null, exams: [], curExam: null,
-            q: 1, total: 10, time: 0, timer: null,
-            done: false, answers: [], keys: [], results: []
+<script>
+    // ====== PARTICLES ======
+    (function() {
+        var c = document.getElementById('particles');
+        var ctx = c.getContext('2d');
+        var p = [];
+        
+        function rs() {
+            c.width = window.innerWidth;
+            c.height = window.innerHeight;
+        }
+        rs();
+        window.addEventListener('resize', rs);
+
+        function Pt() {
+            this.x = Math.random() * c.width;
+            this.y = Math.random() * c.height;
+            this.s = Math.random() * 2 + 0.5;
+            this.vx = (Math.random() - 0.5) * 0.4;
+            this.vy = (Math.random() - 0.5) * 0.4;
+            this.o = Math.random() * 0.5 + 0.1;
+        }
+        Pt.prototype.up = function() {
+            this.x += this.vx;
+            this.y += this.vy;
+            if (this.x < 0 || this.x > c.width) this.vx *= -1;
+            if (this.y < 0 || this.y > c.height) this.vy *= -1;
+        };
+        Pt.prototype.dr = function() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.s, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(120,160,255,' + this.o + ')';
+            ctx.fill();
         };
 
-        // ====== HELPERS ======
-        function $(id) { return document.getElementById(id); }
-        function LS(k, d) {
-            try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }
-            catch(e) { return d; }
+        for (var i = 0; i < 50; i++) p.push(new Pt());
+
+        function anim() {
+            ctx.clearRect(0, 0, c.width, c.height);
+            for (var i = 0; i < p.length; i++) { p[i].up(); p[i].dr(); }
+            requestAnimationFrame(anim);
         }
-        function LSet(k, v) {
-            try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {}
-        }
+        anim();
+    })();
 
-        function show(id) {
-            var screens = document.querySelectorAll('.screen');
-            for (var i = 0; i < screens.length; i++) {
-                screens[i].classList.remove('active');
-            }
-            $(id).classList.add('active');
-        }
+    // ====== HELPERS ======
+    function $(id) { return document.getElementById(id); }
+    function LS(k, d) {
+        try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }
+        catch(e) { return d; }
+    }
+    function LSet(k, v) {
+        try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {}
+    }
+    function show(id) {
+        var s = document.querySelectorAll('.screen');
+        for (var i = 0; i < s.length; i++) s[i].classList.remove('active');
+        $(id).classList.add('active');
+    }
 
-        // ====== LOGIN ======
-        function doLogin() {
-            var u = $('loginUser').value.trim();
-            var p = $('loginPass').value.trim();
-            var m = $('loginMsg');
-            if (!u || !p) { m.textContent = 'لطفاً پر کنید'; return; }
-            m.textContent = '⏳';
+    // ====== STATE ======
+    var S = {
+        user: null, exams: [], cur: null,
+        q: 1, total: 10, time: 0, timer: null,
+        done: false, ans: [], keys: [], results: []
+    };
 
-            var users = LS('wd_users', [
-                { username: '6263', password: 'amir', name: 'ادمین' },
-                { username: '7556', password: '7647', name: 'دم پختک' },
-                { username: '00000', password: '55555', name: 'امیر محمد' }
-            ]);
-            LSet('wd_users', users);
+    // ====== LOGIN ======
+    function doLogin() {
+        var u = $('loginUser').value.trim();
+        var p = $('loginPass').value.trim();
+        var m = $('loginMsg');
+        if (!u || !p) { m.textContent = 'لطفاً پر کنید'; m.className = 'status error'; return; }
+        m.textContent = '⏳ در حال بررسی...'; m.className = 'status info';
 
-            var found = null;
-            for (var i = 0; i < users.length; i++) {
-                if (users[i].username === u && users[i].password === p) {
-                    found = users[i];
-                    break;
-                }
-            }
+        var users = LS('wd_users', [
+            { username: '6263', password: 'amir', name: 'ادمین' },
+            { username: '7556', password: '7647', name: 'دم پختک' },
+            { username: '00000', password: '55555', name: 'امیر محمد' }
+        ]);
+        LSet('wd_users', users);
 
-            if (found) {
-                S.user = found;
-                $('welcomeText').textContent = '👤 ' + found.name;
-                show('examsScreen');
-                loadExams();
-            } else {
-                m.textContent = '❌ کاربری یافت نشد';
-            }
-        }
-
-        function doLogout() {
-            S.user = null;
-            show('loginScreen');
+        var found = null;
+        for (var i = 0; i < users.length; i++) {
+            if (users[i].username === u && users[i].password === p) { found = users[i]; break; }
         }
 
-        // ====== EXAMS ======
-        function loadExams() {
-            var exams = LS('wd_exams', [
-                { id: 'azmoon-1', Title: 'آزمون تستی ۱', Time_in: '00:00', Time_out: '23:59', Bio: 'نمونه آزمون', Time_min: '10', count: '10' },
-                { id: 'azmoon-2', Title: 'آزمون تستی ۲', Time_in: '08:00', Time_out: '12:00', Bio: 'آزمون صبح', Time_min: '15', count: '10' }
-            ]);
-            LSet('wd_exams', exams);
-            S.exams = exams;
-
-            var c = $('examsList');
-            if (!exams.length) {
-                c.innerHTML = '<p style="text-align:center;color:var(--text2);">📭 آزمونی نیست</p>';
-                return;
-            }
-
-            var html = '';
-            for (var i = 0; i < exams.length; i++) {
-                var e = exams[i];
-                html += '<div class="exam-card" onclick="startExam(' + i + ')">';
-                html += '<h3>📋 ' + e.Title + '</h3>';
-                html += '<small>⏰ ' + e.Time_in + ' — ' + e.Time_out + ' | ⏱ ' + e.Time_min + 'دقیقه | 📝 ' + e.count + 'سوال</small>';
-                if (e.Bio) html += '<p style="font-size:12px;color:var(--text2);">' + e.Bio.substring(0, 60) + '</p>';
-                html += '</div>';
-            }
-            c.innerHTML = html;
-        }
-
-        function startExam(i) {
-            var exam = S.exams[i];
-            S.curExam = exam;
-            S.q = 1;
-            S.total = parseInt(exam.count) || 10;
-            S.time = (parseFloat(exam.Time_min) || 10) * 60;
-            S.done = false;
-            S.answers = new Array(S.total);
-            for (var j = 0; j < S.total; j++) S.answers[j] = '';
-
-            var keys = LS('keys_' + exam.id, null);
-            if (!keys) {
-                keys = [];
-                for (var k = 0; k < S.total; k++) {
-                    keys.push(String(Math.floor(Math.random() * 4) + 1));
-                }
-                LSet('keys_' + exam.id, keys);
-            }
-            S.keys = keys;
-
-            $('pdfViewer').src = 'azmoonha/' + exam.id + '/soal.pdf';
-            show('examScreen');
-            updateUI();
-            startTimer();
-        }
-
-        function backToExams() {
-            if (S.timer) clearInterval(S.timer);
+        if (found) {
+            S.user = found;
+            $('welcomeText').textContent = '👤 ' + found.name;
             show('examsScreen');
             loadExams();
+        } else {
+            m.textContent = '❌ کاربری یافت نشد';
+            m.className = 'status error';
+        }
+    }
+
+    function doLogout() { S.user = null; show('loginScreen'); }
+
+    // ====== EXAMS ======
+    function loadExams() {
+        var exams = LS('wd_exams', [
+            { id: 'azmoon-1', Title: 'آزمون تستی ۱', Time_in: '00:00', Time_out: '23:59', Bio: 'نمونه آزمون', Time_min: '10', count: '10' },
+            { id: 'azmoon-2', Title: 'آزمون تستی ۲', Time_in: '08:00', Time_out: '12:00', Bio: 'آزمون صبح', Time_min: '15', count: '10' }
+        ]);
+        LSet('wd_exams', exams);
+        S.exams = exams;
+
+        var c = $('examsList');
+        if (!exams.length) {
+            c.innerHTML = '<p style="text-align:center;color:var(--text2);padding:30px;">📭 آزمونی نیست</p>';
+            return;
         }
 
-        // ====== EXAM ======
-        function selOpt(o) {
-            if (S.done) return;
-            S.answers[S.q - 1] = String(o);
-            updateOpts();
+        var h = '';
+        for (var i = 0; i < exams.length; i++) {
+            var e = exams[i];
+            h += '<div class="exam-card" onclick="startExam(' + i + ')">';
+            h += '<h3>📋 ' + e.Title + '</h3>';
+            h += '<p>⏰ ' + e.Time_in + ' تا ' + e.Time_out + ' | ⏱ ' + e.Time_min + 'دقیقه | 📝 ' + e.count + 'سوال</p>';
+            if (e.Bio) h += '<p>' + e.Bio.substring(0, 60) + '</p>';
+            h += '</div>';
         }
+        c.innerHTML = h;
+    }
 
-        function updateOpts() {
-            var sel = S.answers[S.q - 1];
-            var btns = document.querySelectorAll('.opt-btn');
-            for (var i = 0; i < btns.length; i++) {
-                if (String(i + 1) === sel) {
-                    btns[i].classList.add('selected');
-                } else {
-                    btns[i].classList.remove('selected');
-                }
-            }
+    function startExam(i) {
+        var e = S.exams[i];
+        S.cur = e;
+        S.q = 1;
+        S.total = parseInt(e.count) || 10;
+        S.time = (parseFloat(e.Time_min) || 10) * 60;
+        S.done = false;
+        S.ans = [];
+        for (var j = 0; j < S.total; j++) S.ans[j] = '';
+
+        var keys = LS('keys_' + e.id, null);
+        if (!keys) {
+            keys = [];
+            for (var k = 0; k < S.total; k++) keys.push(String(Math.floor(Math.random() * 4) + 1));
+            LSet('keys_' + e.id, keys);
         }
+        S.keys = keys;
 
-        function prevQ() { if (S.q > 1) { S.q--; updateUI(); } }
-        function nextQ() { if (S.q < S.total) { S.q++; updateUI(); } }
+        $('pdfFrame').src = 'azmoonha/' + e.id + '/soal.pdf';
+        show('examScreen');
+        updateUI();
+        startTimer();
+    }
 
-        function goQ() {
-            var n = parseInt($('qNum').value);
-            if (n >= 1 && n <= S.total) { S.q = n; updateUI(); }
+    function back() {
+        if (S.timer) clearInterval(S.timer);
+        show('examsScreen');
+        loadExams();
+    }
+
+    // ====== EXAM ======
+    function sel(o) {
+        if (S.done) return;
+        S.ans[S.q - 1] = String(o);
+        updateOpts();
+    }
+
+    function updateOpts() {
+        var sel = S.ans[S.q - 1];
+        var btns = document.querySelectorAll('.opt-btn');
+        for (var i = 0; i < btns.length; i++) {
+            btns[i].className = 'opt-btn' + (String(i + 1) === sel ? ' selected' : '');
         }
+    }
 
-        function updateUI() {
-            $('qLabel').textContent = 'سوال ' + S.q + ' از ' + S.total;
-            $('qNum').value = S.q;
-            updateOpts();
-        }
+    function prev() { if (S.q > 1) { S.q--; updateUI(); } }
+    function next() { if (S.q < S.total) { S.q++; updateUI(); } }
+    function jump() {
+        var n = parseInt($('qNum').value);
+        if (n >= 1 && n <= S.total) { S.q = n; updateUI(); }
+    }
 
-        function startTimer() {
-            if (S.timer) clearInterval(S.timer);
+    function updateUI() {
+        $('qLabel').textContent = 'سوال ' + S.q + ' از ' + S.total;
+        $('qNum').value = S.q;
+        updateOpts();
+    }
+
+    function startTimer() {
+        if (S.timer) clearInterval(S.timer);
+        updateTimer();
+        S.timer = setInterval(function() {
+            if (S.time <= 0) { clearInterval(S.timer); autoEnd(); return; }
+            S.time--;
             updateTimer();
-            S.timer = setInterval(function() {
-                if (S.time <= 0) {
-                    clearInterval(S.timer);
-                    autoEnd();
-                    return;
-                }
-                S.time--;
-                updateTimer();
-            }, 1000);
+        }, 1000);
+    }
+
+    function updateTimer() {
+        var h = Math.floor(S.time / 3600);
+        var m = Math.floor((S.time % 3600) / 60);
+        var s = S.time % 60;
+        $('timer').textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+        var cl = 'timer';
+        if (S.time < 60) cl += ' danger';
+        else if (S.time < 180) cl += ' warning';
+        $('timer').className = cl;
+    }
+
+    function autoEnd() { S.done = true; clearInterval(S.timer); $('timer').textContent = '00:00:00'; showResult(); }
+    function end() { if (confirm('مطمئنید؟')) { S.done = true; clearInterval(S.timer); showResult(); } }
+
+    function showResult() {
+        var c = 0, w = 0, u = 0;
+        for (var i = 0; i < S.total; i++) {
+            var a = S.ans[i];
+            if (!a) u++;
+            else if (a === S.keys[i]) c++;
+            else w++;
         }
+        var pct = S.total > 0 ? Math.round((c / S.total) * 100) : 0;
 
-        function updateTimer() {
-            var h = Math.floor(S.time / 3600);
-            var m = Math.floor((S.time % 3600) / 60);
-            var s = S.time % 60;
-            $('timer').textContent = 
-                String(h).padStart(2, '0') + ':' + 
-                String(m).padStart(2, '0') + ':' + 
-                String(s).padStart(2, '0');
+        var r = {
+            user: S.user ? S.user.name : '?',
+            exam: S.cur ? S.cur.Title : '?',
+            correct: c, wrong: w, unanswered: u,
+            total: S.total, percentage: pct,
+            date: new Date().toISOString()
+        };
 
-            if (S.time < 60) $('timer').className = 'timer danger';
-            else if (S.time < 180) $('timer').className = 'timer warning';
-            else $('timer').className = 'timer';
-        }
+        S.results = LS('wd_results', []);
+        S.results.push(r);
+        LSet('wd_results', S.results);
 
-        function autoEnd() {
-            S.done = true;
-            clearInterval(S.timer);
-            $('timer').textContent = '00:00:00';
-            showResult();
-        }
+        var h = '';
+        h += '<p style="margin-bottom:5px;">👤 ' + r.user + '</p>';
+        h += '<p style="margin-bottom:12px;color:var(--text2);">📋 ' + r.exam + '</p>';
+        h += '<div class="result-line"><span>✅ درست:</span><span>' + c + '</span></div>';
+        h += '<div class="result-line"><span>❌ غلط:</span><span>' + w + '</span></div>';
+        h += '<div class="result-line"><span>⏭ نزده:</span><span>' + u + '</span></div>';
+        h += '<div class="result-line"><span>📝 کل:</span><span>' + S.total + '</span></div>';
+        h += '<h3 style="margin-top:12px;color:var(--accent);">📈 ' + pct + '%</h3>';
+        $('resultContent').innerHTML = h;
+        show('resultScreen');
+    }
 
-        function endExam() {
-            if (confirm('مطمئنید؟')) {
-                S.done = true;
-                clearInterval(S.timer);
-                showResult();
-            }
-        }
+    function downloadJSON() {
+        var data = JSON.stringify(S.results, null, 2);
+        var blob = new Blob([data], { type: 'application/json' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = 'webdark-results.json'; a.click();
+        URL.revokeObjectURL(url);
+    }
 
-        function showResult() {
-            var c = 0, w = 0, u = 0;
-            for (var i = 0; i < S.total; i++) {
-                var a = S.answers[i];
-                if (!a) u++;
-                else if (a === S.keys[i]) c++;
-                else w++;
-            }
-            var pct = S.total > 0 ? Math.round((c / S.total) * 100) : 0;
-
-            var r = {
-                user: S.user ? S.user.name : '?',
-                username: S.user ? S.user.username : '?',
-                exam: S.curExam ? S.curExam.Title : '?',
-                correct: c, wrong: w, unanswered: u,
-                total: S.total, percentage: pct,
-                date: new Date().toISOString()
-            };
-
-            S.results = LS('wd_results', []);
-            S.results.push(r);
-            LSet('wd_results', S.results);
-
-            var html = '';
-            html += '<p>👤 ' + r.user + '</p>';
-            html += '<p>📋 ' + r.exam + '</p>';
-            html += '<hr style="margin:10px 0;border-color:var(--border);">';
-            html += '<p>✅ درست: ' + c + '</p>';
-            html += '<p>❌ غلط: ' + w + '</p>';
-            html += '<p>⏭ نزده: ' + u + '</p>';
-            html += '<p>📝 کل: ' + S.total + '</p>';
-            html += '<h3 style="margin-top:10px;color:var(--accent);">📈 ' + pct + '%</h3>';
-            $('resultContent').innerHTML = html;
-            show('resultScreen');
-        }
-
-        function downloadJSON() {
-            var data = JSON.stringify(S.results, null, 2);
-            var blob = new Blob([data], { type: 'application/json' });
-            var url = URL.createObjectURL(blob);
-            var a = document.createElement('a');
-            a.href = url;
-            a.download = 'webdark-results.json';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        // ====== INIT ======
-        if (!LS('wd_users', null)) {
-            LSet('wd_users', [
-                { username: '6263', password: 'amir', name: 'ادمین' },
-                { username: '7556', password: '7647', name: 'دم پختک' },
-                { username: '00000', password: '55555', name: 'امیر محمد' }
-            ]);
-        }
-        if (!LS('wd_exams', null)) {
-            LSet('wd_exams', [
-                { id: 'azmoon-1', Title: 'آزمون تستی ۱', Time_in: '00:00', Time_out: '23:59', Bio: 'نمونه آزمون', Time_min: '10', count: '10' },
-                { id: 'azmoon-2', Title: 'آزمون تستی ۲', Time_in: '08:00', Time_out: '12:00', Bio: 'آزمون صبح', Time_min: '15', count: '10' }
-            ]);
-        }
-        if (!LS('wd_results', null)) {
-            LSet('wd_results', []);
-        }
-    </script>
-
+    // ====== INIT ======
+    if (!LS('wd_users', null)) {
+        LSet('wd_users', [
+            { username: '6263', password: 'amir', name: 'ادمین' },
+            { username: '7556', password: '7647', name: 'دم پختک' },
+            { username: '00000', password: '55555', name: 'امیر محمد' }
+        ]);
+    }
+    if (!LS('wd_exams', null)) {
+        LSet('wd_exams', [
+            { id: 'azmoon-1', Title: 'آزمون تستی ۱', Time_in: '00:00', Time_out: '23:59', Bio: 'نمونه آزمون', Time_min: '10', count: '10' },
+            { id: 'azmoon-2', Title: 'آزمون تستی ۲', Time_in: '08:00', Time_out: '12:00', Bio: 'آزمون صبح', Time_min: '15', count: '10' }
+        ]);
+    }
+    if (!LS('wd_results', null)) {
+        LSet('wd_results', []);
+    }
+</script>
 </body>
 </html>
