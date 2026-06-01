@@ -7,79 +7,41 @@
     <link rel="icon" type="image/png" href="webdark-logo.png">
     <style>
         :root {
-            --bg: #0a0f1f;
-            --card: rgba(18,25,55,0.85);
-            --accent: #58a6ff;
-            --green: #3fb950;
-            --red: #f85149;
-            --yellow: #d2991d;
-            --text: #eef3ff;
-            --text2: #8b949e;
-            --radius: 14px;
+            --bg: #0a0f1f; --card: rgba(18,25,55,0.85); --accent: #58a6ff;
+            --green: #3fb950; --red: #f85149; --yellow: #d2991d;
+            --text: #eef3ff; --text2: #8b949e; --radius: 14px;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: Tahoma, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            padding: 12px;
-            overflow-x: hidden;
+            font-family: Tahoma, sans-serif; background: var(--bg);
+            color: var(--text); min-height: 100vh; padding: 12px; overflow-x: hidden;
         }
-
-        #particles {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0; pointer-events: none;
-        }
-
+        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
         .container { max-width: 520px; margin: 0 auto; position: relative; z-index: 1; }
-
         .screen { display: none; }
         .screen.active { display: block; animation: fadeIn 0.35s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card {
-            background: var(--card); backdrop-filter: blur(10px);
-            border-radius: var(--radius); padding: 18px;
-            border: 1px solid rgba(255,255,255,0.08); margin-bottom: 10px;
-        }
-
+        .card { background: var(--card); backdrop-filter: blur(10px); border-radius: var(--radius); padding: 18px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 10px; }
         .logo { text-align: center; font-size: 26px; font-weight: bold; margin-bottom: 15px; }
         .logo span { color: var(--accent); }
         .logo-img { display: block; margin: 0 auto 15px; height: 50px; }
 
-        input {
-            width: 100%; padding: 13px; background: rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
-            color: #fff; font-size: 14px; text-align: center;
-            margin-bottom: 10px; outline: none;
-        }
+        input { width: 100%; padding: 13px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #fff; font-size: 14px; text-align: center; margin-bottom: 10px; outline: none; }
         input:focus { border-color: var(--accent); }
 
-        button {
-            width: 100%; padding: 13px; border: none; border-radius: 10px;
-            font-size: 14px; font-weight: bold; cursor: pointer;
-            color: #fff; margin-top: 6px; transition: 0.2s;
-        }
+        button { width: 100%; padding: 13px; border: none; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; color: #fff; margin-top: 6px; transition: 0.2s; }
         button:active { transform: scale(0.96); }
-        .btn-green { background: var(--green); }
-        .btn-red { background: var(--red); }
-        .btn-blue { background: var(--accent); }
+        button:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-green { background: var(--green); } .btn-red { background: var(--red); } .btn-blue { background: var(--accent); }
         .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text); }
         .btn-sm { width: auto; padding: 8px 14px; font-size: 12px; }
 
         .timer { text-align: center; font-size: 28px; font-weight: bold; padding: 12px; color: var(--green); }
-        .timer.warning { color: var(--yellow); }
-        .timer.danger { color: var(--red); }
+        .timer.warning { color: var(--yellow); } .timer.danger { color: var(--red); }
 
         .options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
-        .opt-btn {
-            padding: 16px; background: var(--card);
-            border: 2px solid rgba(255,255,255,0.12); border-radius: 10px;
-            color: #fff; font-size: 15px; font-weight: bold;
-            cursor: pointer; text-align: center;
-        }
+        .opt-btn { padding: 16px; background: var(--card); border: 2px solid rgba(255,255,255,0.12); border-radius: 10px; color: #fff; font-size: 15px; font-weight: bold; cursor: pointer; text-align: center; }
         .opt-btn.selected { background: var(--green); border-color: var(--green); }
 
         .nav-row { display: flex; gap: 6px; align-items: center; margin: 12px 0; }
@@ -87,53 +49,29 @@
         .nav-row input { width: 50px; margin: 0; padding: 11px; }
 
         .pdf-container { position: relative; margin-bottom: 10px; }
-        .pdf-canvas { width: 100%; border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.08); background: #000; }
+        .pdf-canvas, .pdf-iframe, .pdf-embed, .pdf-object { width: 100%; border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.08); background: #000; }
+        .pdf-canvas { display: none; } .pdf-iframe { display: none; height: 400px; } .pdf-embed { display: none; height: 400px; } .pdf-object { display: none; height: 400px; }
+        .pdf-fallback { display: none; text-align: center; padding: 30px; background: var(--card); border-radius: var(--radius); }
         .page-nav { display: flex; gap: 6px; align-items: center; margin-top: 8px; }
-        .page-nav button { flex: 1; padding: 8px; font-size: 12px; }
-        .page-nav input { width: 45px; padding: 8px; margin: 0; }
+        .page-nav button { flex: 1; padding: 8px; font-size: 12px; } .page-nav input { width: 45px; padding: 8px; margin: 0; }
 
-        .exam-card {
-            background: var(--card); border-radius: var(--radius);
-            padding: 14px; border: 1px solid rgba(255,255,255,0.08);
-            margin-bottom: 8px; cursor: pointer; transition: 0.2s;
-        }
+        .exam-card { background: var(--card); border-radius: var(--radius); padding: 14px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
         .exam-card:hover { border-color: var(--accent); }
         .exam-card.completed { opacity: 0.5; pointer-events: none; border-color: var(--green); }
         .exam-card h3 { margin-bottom: 4px; font-size: 15px; }
         .exam-card p { font-size: 11px; color: var(--text2); margin-top: 3px; }
 
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .header h2 { font-size: 16px; }
-        .header button { width: auto; padding: 8px 16px; font-size: 12px; }
+        .header h2 { font-size: 16px; } .header button { width: auto; padding: 8px 16px; font-size: 12px; }
 
-        .banner {
-            background: linear-gradient(135deg, #3b6eff, #9147ff);
-            color: #fff; padding: 12px; border-radius: var(--radius);
-            text-align: center; margin: 12px 0; font-weight: bold; font-size: 13px;
-        }
-
-        .result-line {
-            display: flex; justify-content: space-between;
-            padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .error-toast {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: var(--red); color: #fff; padding: 14px 24px;
-            border-radius: 25px; z-index: 99; font-size: 13px;
-            text-align: center; animation: slideUp 0.4s ease;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 90%;
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateX(-50%) translateY(30px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
+        .banner { background: linear-gradient(135deg, #3b6eff, #9147ff); color: #fff; padding: 12px; border-radius: var(--radius); text-align: center; margin: 12px 0; font-weight: bold; font-size: 13px; }
+        .result-line { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .error-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--red); color: #fff; padding: 14px 24px; border-radius: 25px; z-index: 99; font-size: 13px; text-align: center; animation: slideUp 0.4s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 90%; }
+        @keyframes slideUp { from { opacity: 0; transform: translateX(-50%) translateY(30px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
     </style>
 </head>
 <body>
-
 <canvas id="particles"></canvas>
-
 <div class="container">
 
     <!-- LOGIN -->
@@ -145,23 +83,16 @@
             <input type="text" id="loginUser" placeholder="نام کاربری" autocomplete="off">
             <input type="password" id="loginPass" placeholder="رمز عبور" autocomplete="off">
             <button class="btn-green" onclick="doLogin()">ورود به آزمون</button>
-            <p id="loginMsg" style="text-align:center;margin-top:8px;font-size:12px;color:var(--text2);"></p>
+            <p id="loginMsg" style="text-align:center;margin-top:8px;font-size:12px;"></p>
         </div>
-        <div class="banner">
-            📱 <span style="cursor:pointer;text-decoration:underline;" onclick="alert('نسخه APK به زودی!')">دانلود نسخه اندروید</span> — تجربه بهتر و پایدار!
-        </div>
+        <div class="banner">📱 <span style="cursor:pointer;text-decoration:underline;" onclick="alert('نسخه APK به زودی!')">دانلود نسخه اندروید</span> — تجربه بهتر و پایدار!</div>
     </div>
 
     <!-- EXAMS -->
     <div class="screen" id="examsScreen">
-        <div class="header">
-            <h2 id="welcomeText">👤 کاربر</h2>
-            <button class="btn-outline btn-sm" onclick="doLogout()">🚪 خروج</button>
-        </div>
+        <div class="header"><h2 id="welcomeText">👤 کاربر</h2><button class="btn-outline btn-sm" onclick="doLogout()">🚪 خروج</button></div>
         <div id="examsList"></div>
-        <div class="banner">
-            📱 <span style="cursor:pointer;text-decoration:underline;" onclick="alert('APK به زودی!')">نسخه APK</span> — بدون قطعی و باگ!
-        </div>
+        <div class="banner">📱 <span style="cursor:pointer;text-decoration:underline;" onclick="alert('APK به زودی!')">نسخه APK</span> — بدون قطعی و باگ!</div>
     </div>
 
     <!-- EXAM -->
@@ -171,7 +102,14 @@
 
         <div class="pdf-container">
             <canvas class="pdf-canvas" id="pdfCanvas"></canvas>
-            <div class="page-nav">
+            <iframe class="pdf-iframe" id="pdfIframe" src="" frameborder="0"></iframe>
+            <embed class="pdf-embed" id="pdfEmbed" src="" type="application/pdf">
+            <object class="pdf-object" id="pdfObject" data="" type="application/pdf"></object>
+            <div class="pdf-fallback" id="pdfFallback">
+                <p>📄 پیش‌نمایش PDF در این مرورگر پشتیبانی نمی‌شود.</p>
+                <button class="btn-blue btn-sm" onclick="openPDFNewTab()" style="margin-top:10px;">🔗 باز کردن در تب جدید</button>
+            </div>
+            <div class="page-nav" id="pageNav" style="display:none;">
                 <button class="btn-outline btn-sm" onclick="prevPage()">📄 صفحه قبل</button>
                 <input type="number" id="pageNum" value="1" onchange="goToPage()">
                 <button class="btn-outline btn-sm" onclick="nextPage()">صفحه بعد 📄</button>
@@ -179,10 +117,8 @@
         </div>
 
         <div class="options">
-            <button class="opt-btn" onclick="sel(1)">۱</button>
-            <button class="opt-btn" onclick="sel(2)">۲</button>
-            <button class="opt-btn" onclick="sel(3)">۳</button>
-            <button class="opt-btn" onclick="sel(4)">۴</button>
+            <button class="opt-btn" onclick="sel(1)">۱</button><button class="opt-btn" onclick="sel(2)">۲</button>
+            <button class="opt-btn" onclick="sel(3)">۳</button><button class="opt-btn" onclick="sel(4)">۴</button>
         </div>
         <div class="nav-row">
             <button onclick="prev()">◀ سوال قبل</button>
@@ -190,29 +126,18 @@
             <button onclick="next()">سوال بعد ▶</button>
         </div>
         <button class="btn-red" onclick="end()">🏁 اتمام آزمون</button>
-        <button class="btn-outline" style="margin-top:6px;" onclick="back()">↩ بازگشت</button>
     </div>
 
     <!-- RESULT -->
     <div class="screen" id="resultScreen">
-        <div class="card" style="text-align:center;">
-            <h2 style="margin-bottom:12px;">📊 نتایج آزمون</h2>
-            <div id="resultContent"></div>
-            <button class="btn-green" onclick="back()" style="margin-top:12px;">✅ باشه</button>
-            <button class="btn-blue" style="margin-top:6px;" onclick="downloadJSON()">📥 دانلود نتایج</button>
-        </div>
+        <div class="card" style="text-align:center;"><h2 style="margin-bottom:12px;">📊 نتایج آزمون</h2><div id="resultContent"></div><button class="btn-green" onclick="goToExams()" style="margin-top:12px;">✅ باشه</button><button class="btn-blue" style="margin-top:6px;" onclick="downloadJSON()">📥 دانلود نتایج</button></div>
     </div>
 
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-
 <script>
     // PARTICLES
     (function(){var c=document.getElementById('particles'),ctx=c.getContext('2d'),p=[];function rs(){c.width=innerWidth;c.height=innerHeight}rs();addEventListener('resize',rs);function Pt(){this.x=Math.random()*c.width;this.y=Math.random()*c.height;this.s=Math.random()*2+.5;this.vx=(Math.random()-.5)*.4;this.vy=(Math.random()-.5)*.4;this.o=Math.random()*.5+.1}Pt.prototype.up=function(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>c.width)this.vx*=-1;if(this.y<0||this.y>c.height)this.vy*=-1};Pt.prototype.dr=function(){ctx.beginPath();ctx.arc(this.x,this.y,this.s,0,Math.PI*2);ctx.fillStyle='rgba(120,160,255,'+this.o+')';ctx.fill()};for(var i=0;i<50;i++)p.push(new Pt());function anim(){ctx.clearRect(0,0,c.width,c.height);for(var i=0;i<p.length;i++){p[i].up();p[i].dr()}requestAnimationFrame(anim)}anim()})();
-
-    // RANDOM ERROR (30%)
-    function maybeError(){if(Math.random()<0.3){var t=document.createElement('div');t.className='error-toast';t.innerHTML='⚠️ خطای سیستمی!<br>نسخه وب ناپایدار است.<br>📱 لطفاً نسخه APK را نصب کنید.';document.body.appendChild(t);setTimeout(function(){if(t.parentNode)t.remove()},4000);return true}return false}
 
     // HELPERS
     function $(id){return document.getElementById(id)}
@@ -220,50 +145,257 @@
     function LSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
     function show(id){var s=document.querySelectorAll('.screen');for(var i=0;i<s.length;i++)s[i].classList.remove('active');$(id).classList.add('active')}
 
-    // ANTI-CLOSE
+    // ANTI-CLOSE + ANTI-REFRESH
     window.addEventListener('beforeunload',function(e){if(S.cur&&!S.done){e.preventDefault();e.returnValue='';return''}});
 
     // STATE
-    var S={user:null,exams:[],cur:null,q:1,total:10,time:0,timer:null,done:false,ans:[],keys:[],results:[],pdfDoc:null,currentPage:1,totalPages:0};
+    var S={user:null,exams:[],cur:null,q:1,total:10,time:0,timer:null,done:false,ans:[],keys:[],results:[],pdfDoc:null,currentPage:1,totalPages:0,currentPDFUrl:''};
 
-    // PDF
-    function loadPDF(url){if(maybeError())return;pdfjsLib.getDocument(url).promise.then(function(pdf){S.pdfDoc=pdf;S.totalPages=pdf.numPages;S.currentPage=1;$('pageNum').max=S.totalPages;renderPage(1)}).catch(function(){})}
-    function renderPage(num){if(!S.pdfDoc)return;S.pdfDoc.getPage(num).then(function(page){var canvas=$('pdfCanvas'),ctx=canvas.getContext('2d'),viewport=page.getViewport({scale:0.7});canvas.height=viewport.height;canvas.width=viewport.width;page.render({canvasContext:ctx,viewport:viewport});S.currentPage=num;$('pageNum').value=num})}
-    function prevPage(){if(S.currentPage>1)renderPage(S.currentPage-1)}
-    function nextPage(){if(S.currentPage<S.totalPages)renderPage(S.currentPage+1)}
-    function goToPage(){var n=parseInt($('pageNum').value);if(n>=1&&n<=S.totalPages)renderPage(n)}
+    // ====== 5 PDF METHODS ======
+    function loadPDF(url) {
+        S.currentPDFUrl = url;
+        hideAllPDF();
+        
+        // Method 1: PDF.js Canvas
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.getDocument(url).promise.then(function(pdf) {
+                S.pdfDoc = pdf;
+                S.totalPages = pdf.numPages;
+                S.currentPage = 1;
+                $('pageNum').max = S.totalPages;
+                $('pageNum').value = 1;
+                $('pdfCanvas').style.display = 'block';
+                $('pageNav').style.display = 'flex';
+                renderPage(1);
+            }).catch(function() {
+                tryMethod2(url);
+            });
+        } else {
+            tryMethod2(url);
+        }
+    }
+
+    function tryMethod2(url) {
+        // Method 2: Iframe
+        $('pdfIframe').src = url;
+        $('pdfIframe').style.display = 'block';
+        $('pageNav').style.display = 'none';
+        
+        $('pdfIframe').onload = function() {
+            // Iframe loaded successfully
+        };
+        $('pdfIframe').onerror = function() {
+            tryMethod3(url);
+        };
+        
+        setTimeout(function() {
+            if ($('pdfIframe').style.display === 'block') return;
+            tryMethod3(url);
+        }, 2000);
+    }
+
+    function tryMethod3(url) {
+        // Method 3: Embed
+        $('pdfEmbed').src = url;
+        $('pdfEmbed').style.display = 'block';
+        $('pdfIframe').style.display = 'none';
+        
+        setTimeout(function() {
+            tryMethod4(url);
+        }, 2000);
+    }
+
+    function tryMethod4(url) {
+        // Method 4: Object
+        $('pdfObject').data = url;
+        $('pdfObject').style.display = 'block';
+        $('pdfEmbed').style.display = 'none';
+        
+        setTimeout(function() {
+            tryMethod5(url);
+        }, 2000);
+    }
+
+    function tryMethod5(url) {
+        // Method 5: Open in new tab + fallback message
+        $('pdfObject').style.display = 'none';
+        $('pdfFallback').style.display = 'block';
+        $('pageNav').style.display = 'none';
+    }
+
+    function openPDFNewTab() {
+        window.open(S.currentPDFUrl, '_blank');
+    }
+
+    function hideAllPDF() {
+        $('pdfCanvas').style.display = 'none';
+        $('pdfIframe').style.display = 'none';
+        $('pdfEmbed').style.display = 'none';
+        $('pdfObject').style.display = 'none';
+        $('pdfFallback').style.display = 'none';
+        $('pageNav').style.display = 'none';
+    }
+
+    function renderPage(num) {
+        if (!S.pdfDoc) return;
+        S.pdfDoc.getPage(num).then(function(page) {
+            var canvas = $('pdfCanvas'), ctx = canvas.getContext('2d');
+            var viewport = page.getViewport({scale: 0.7});
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            page.render({canvasContext: ctx, viewport: viewport});
+            S.currentPage = num;
+            $('pageNum').value = num;
+        });
+    }
+    function prevPage() { if (S.currentPage > 1) renderPage(S.currentPage - 1); }
+    function nextPage() { if (S.currentPage < S.totalPages) renderPage(S.currentPage + 1); }
+    function goToPage() { var n = parseInt($('pageNum').value); if (n >= 1 && n <= S.totalPages) renderPage(n); }
 
     // LOGIN
-    function doLogin(){var u=$('loginUser').value.trim(),p=$('loginPass').value.trim(),m=$('loginMsg');if(!u||!p){m.textContent='لطفاً پر کنید';return}m.textContent='⏳';var users=LS('wd_users',[{username:'6263',password:'amir',name:'ادمین'},{username:'7556',password:'7647',name:'دم پختک'},{username:'00000',password:'55555',name:'امیر محمد'}]);LSet('wd_users',users);var found=null;for(var i=0;i<users.length;i++){if(users[i].username===u&&users[i].password===p){found=users[i];break}}if(found){S.user=found;$('welcomeText').textContent='👤 '+found.name;show('examsScreen');loadExams()}else{m.textContent='❌ کاربری یافت نشد'}}
-    function doLogout(){S.user=null;show('loginScreen')}
+    function doLogin() {
+        var u = $('loginUser').value.trim(), p = $('loginPass').value.trim(), m = $('loginMsg');
+        if (!u || !p) { m.textContent = 'لطفاً پر کنید'; m.style.color = 'var(--red)'; return; }
+        m.textContent = '⏳'; m.style.color = 'var(--text2)';
+        
+        // Random error on login (30%)
+        if (Math.random() < 0.3) {
+            m.textContent = '⚠️ خطای سیستمی! لطفاً دوباره تلاش کنید.';
+            m.style.color = 'var(--red)';
+            showErrorToast('📱 با نسخه APK این ارور وجود ندارد!');
+            return;
+        }
+        
+        var users = LS('wd_users', [{username:'6263',password:'amir',name:'ادمین'},{username:'7556',password:'7647',name:'دم پختک'},{username:'00000',password:'55555',name:'امیر محمد'}]);
+        LSet('wd_users', users);
+        var found = null;
+        for (var i = 0; i < users.length; i++) { if (users[i].username === u && users[i].password === p) { found = users[i]; break; } }
+        
+        if (found) {
+            S.user = found;
+            $('welcomeText').textContent = '👤 ' + found.name;
+            show('examsScreen');
+            loadExams();
+        } else {
+            m.textContent = '❌ کاربری یافت نشد';
+            m.style.color = 'var(--red)';
+        }
+    }
+
+    function doLogout() {
+        if (S.cur && !S.done) {
+            var done = LS('wd_done', []);
+            if (S.cur && done.indexOf(S.cur.id) === -1) { done.push(S.cur.id); LSet('wd_done', done); }
+            if (S.timer) clearInterval(S.timer);
+        }
+        S.user = null; S.cur = null; S.done = false;
+        show('loginScreen');
+    }
 
     // EXAMS
-    function loadExams(){var exams=LS('wd_exams',[{id:'azmoon-1',Title:'آزمون تستی ۱',Time_in:'00:00',Time_out:'23:59',Time_min:'10',count:'10'},{id:'azmoon-2',Title:'آزمون تستی ۲',Time_in:'08:00',Time_out:'12:00',Time_min:'15',count:'10'}]);LSet('wd_exams',exams);S.exams=exams;var done=LS('wd_done',[]);var c=$('examsList');if(!exams.length){c.innerHTML='<p style="text-align:center;color:var(--text2);padding:30px;">📭 نیست</p>';return}var h='';for(var i=0;i<exams.length;i++){var e=exams[i],isDone=done.indexOf(e.id)!==-1;h+='<div class="exam-card'+(isDone?' completed':'')+'" onclick="startExam('+i+')"><h3>📋 '+e.Title+(isDone?' <span style="color:var(--green);font-size:10px;">✅</span>':'')+'</h3><p>⏰ '+e.Time_in+' تا '+e.Time_out+' | ⏱ '+e.Time_min+'دقیقه | 📝 '+e.count+'سوال</p></div>'}c.innerHTML=h}
-    function startExam(i){var done=LS('wd_done',[]);var e=S.exams[i];if(done.indexOf(e.id)!==-1){alert('این آزمون قبلاً انجام شده!');return}if(maybeError())return;S.cur=e;S.q=1;S.total=parseInt(e.count)||10;S.time=(parseFloat(e.Time_min)||10)*60;S.done=false;S.ans=[];for(var j=0;j<S.total;j++)S.ans[j]='';var keys=LS('keys_'+e.id,null);if(!keys){keys=[];for(var k=0;k<S.total;k++)keys.push(String(Math.floor(Math.random()*4)+1));LSet('keys_'+e.id,keys)}S.keys=keys;loadPDF('azmoonha/'+e.id+'/soal.pdf');show('examScreen');updateUI();startTimer()}
-    function back(){if(S.timer)clearInterval(S.timer);show('examsScreen');loadExams()}
+    function loadExams() {
+        var exams = LS('wd_exams', [{id:'azmoon-1',Title:'آزمون تستی ۱',Time_in:'00:00',Time_out:'23:59',Time_min:'10',count:'10'},{id:'azmoon-2',Title:'آزمون تستی ۲',Time_in:'08:00',Time_out:'12:00',Time_min:'15',count:'10'}]);
+        LSet('wd_exams', exams); S.exams = exams;
+        var done = LS('wd_done', []);
+        var c = $('examsList');
+        if (!exams.length) { c.innerHTML = '<p style="text-align:center;color:var(--text2);padding:30px;">📭 نیست</p>'; return; }
+        var h = '';
+        for (var i = 0; i < exams.length; i++) {
+            var e = exams[i], isDone = done.indexOf(e.id) !== -1;
+            h += '<div class="exam-card' + (isDone ? ' completed' : '') + '" onclick="startExam(' + i + ')"><h3>📋 ' + e.Title + (isDone ? ' <span style="color:var(--green);font-size:10px;">✅</span>' : '') + '</h3><p>⏰ ' + e.Time_in + ' تا ' + e.Time_out + ' | ⏱ ' + e.Time_min + 'دقیقه | 📝 ' + e.count + 'سوال</p></div>';
+        }
+        c.innerHTML = h;
+    }
+
+    function startExam(i) {
+        var done = LS('wd_done', []);
+        var e = S.exams[i];
+        if (done.indexOf(e.id) !== -1) { alert('⛔ این آزمون قبلاً انجام شده!\n\nحتی اگر صفحه را ببندید، دیگر نمی‌توانید وارد شوید.'); return; }
+        
+        // Lock exam immediately
+        done.push(e.id); LSet('wd_done', done);
+        
+        S.cur = e; S.q = 1;
+        S.total = parseInt(e.count) || 10;
+        S.time = (parseFloat(e.Time_min) || 10) * 60;
+        S.done = false;
+        S.ans = [];
+        for (var j = 0; j < S.total; j++) S.ans[j] = '';
+        
+        var keys = LS('keys_' + e.id, null);
+        if (!keys) { keys = []; for (var k = 0; k < S.total; k++) keys.push(String(Math.floor(Math.random() * 4) + 1)); LSet('keys_' + e.id, keys); }
+        S.keys = keys;
+        
+        loadPDF('azmoonha/' + e.id + '/soal.pdf');
+        show('examScreen');
+        updateUI();
+        startTimer();
+    }
+
+    function goToExams() {
+        if (S.timer) clearInterval(S.timer);
+        show('examsScreen');
+        loadExams();
+    }
 
     // EXAM
-    function sel(o){if(S.done)return;S.ans[S.q-1]=String(o);updateOpts()}
-    function updateOpts(){var sel=S.ans[S.q-1],btns=document.querySelectorAll('.opt-btn');for(var i=0;i<btns.length;i++)btns[i].className='opt-btn'+(String(i+1)===sel?' selected':'')}
-    function prev(){if(S.q>1){S.q--;updateUI()}}
-    function next(){if(S.q<S.total){S.q++;updateUI()}}
-    function jump(){var n=parseInt($('qNum').value);if(n>=1&&n<=S.total){S.q=n;updateUI()}}
-    function updateUI(){$('qLabel').textContent='سوال '+S.q+' از '+S.total;$('qNum').value=S.q;updateOpts()}
-    function startTimer(){if(S.timer)clearInterval(S.timer);updateTimer();S.timer=setInterval(function(){if(S.time<=0){clearInterval(S.timer);autoEnd();return}S.time--;updateTimer()},1000)}
-    function updateTimer(){var h=Math.floor(S.time/3600),m=Math.floor((S.time%3600)/60),s=S.time%60;$('timer').textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');var cl='timer';if(S.time<60)cl+=' danger';else if(S.time<180)cl+=' warning';$('timer').className=cl}
-    function autoEnd(){S.done=true;clearInterval(S.timer);$('timer').textContent='00:00:00';saveDone();showResult()}
-    function end(){if(confirm('مطمئنید؟')){S.done=true;clearInterval(S.timer);saveDone();showResult()}}
-    function saveDone(){var done=LS('wd_done',[]);if(S.cur&&done.indexOf(S.cur.id)===-1){done.push(S.cur.id);LSet('wd_done',done)}}
+    function sel(o) { if (S.done) return; S.ans[S.q - 1] = String(o); updateOpts(); }
+    function updateOpts() { var sel = S.ans[S.q - 1], btns = document.querySelectorAll('.opt-btn'); for (var i = 0; i < btns.length; i++) btns[i].className = 'opt-btn' + (String(i + 1) === sel ? ' selected' : ''); }
+    function prev() { if (S.q > 1) { S.q--; updateUI(); } }
+    function next() { if (S.q < S.total) { S.q++; updateUI(); } }
+    function jump() { var n = parseInt($('qNum').value); if (n >= 1 && n <= S.total) { S.q = n; updateUI(); } }
+    function updateUI() { $('qLabel').textContent = 'سوال ' + S.q + ' از ' + S.total; $('qNum').value = S.q; updateOpts(); }
+    
+    function startTimer() {
+        if (S.timer) clearInterval(S.timer);
+        updateTimer();
+        S.timer = setInterval(function() {
+            if (S.time <= 0) { clearInterval(S.timer); autoEnd(); return; }
+            S.time--; updateTimer();
+        }, 1000);
+    }
+    function updateTimer() {
+        var h = Math.floor(S.time / 3600), m = Math.floor((S.time % 3600) / 60), s = S.time % 60;
+        $('timer').textContent = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        var cl = 'timer'; if (S.time < 60) cl += ' danger'; else if (S.time < 180) cl += ' warning';
+        $('timer').className = cl;
+    }
+    function autoEnd() { S.done = true; clearInterval(S.timer); $('timer').textContent = '00:00:00'; showResult(); }
+    function end() { if (confirm('مطمئنید؟')) { S.done = true; clearInterval(S.timer); showResult(); } }
 
-    function showResult(){var c=0,w=0,u=0;for(var i=0;i<S.total;i++){var a=S.ans[i];if(!a)u++;else if(a===S.keys[i])c++;else w++}var pct=S.total>0?Math.round((c/S.total)*100):0;var r={user:S.user?S.user.name:'?',exam:S.cur?S.cur.Title:'?',correct:c,wrong:w,unanswered:u,total:S.total,percentage:pct,date:new Date().toISOString()};S.results=LS('wd_results',[]);S.results.push(r);LSet('wd_results',S.results);var h='<p>👤 '+r.user+'</p><p style="color:var(--text2);margin-bottom:12px;">📋 '+r.exam+'</p>';h+='<div class="result-line"><span>✅ درست:</span><span>'+c+'</span></div>';h+='<div class="result-line"><span>❌ غلط:</span><span>'+w+'</span></div>';h+='<div class="result-line"><span>⏭ نزده:</span><span>'+u+'</span></div>';h+='<div class="result-line"><span>📝 کل:</span><span>'+S.total+'</span></div>';h+='<h3 style="margin-top:12px;color:var(--accent);">📈 '+pct+'%</h3>';$('resultContent').innerHTML=h;show('resultScreen')}
-    function downloadJSON(){var data=JSON.stringify(S.results,null,2),blob=new Blob([data],{type:'application/json'});var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='webdark-results.json';a.click();URL.revokeObjectURL(url)}
+    function showResult() {
+        var c = 0, w = 0, u = 0;
+        for (var i = 0; i < S.total; i++) { var a = S.ans[i]; if (!a) u++; else if (a === S.keys[i]) c++; else w++; }
+        var pct = S.total > 0 ? Math.round((c / S.total) * 100) : 0;
+        var r = { user: S.user ? S.user.name : '?', exam: S.cur ? S.cur.Title : '?', correct: c, wrong: w, unanswered: u, total: S.total, percentage: pct, date: new Date().toISOString() };
+        S.results = LS('wd_results', []); S.results.push(r); LSet('wd_results', S.results);
+        var h = '<p>👤 ' + r.user + '</p><p style="color:var(--text2);margin-bottom:12px;">📋 ' + r.exam + '</p>';
+        h += '<div class="result-line"><span>✅ درست:</span><span>' + c + '</span></div>';
+        h += '<div class="result-line"><span>❌ غلط:</span><span>' + w + '</span></div>';
+        h += '<div class="result-line"><span>⏭ نزده:</span><span>' + u + '</span></div>';
+        h += '<div class="result-line"><span>📝 کل:</span><span>' + S.total + '</span></div>';
+        h += '<h3 style="margin-top:12px;color:var(--accent);">📈 ' + pct + '%</h3>';
+        $('resultContent').innerHTML = h;
+        show('resultScreen');
+    }
+
+    function downloadJSON() {
+        var data = JSON.stringify(S.results, null, 2), blob = new Blob([data], { type: 'application/json' });
+        var url = URL.createObjectURL(blob), a = document.createElement('a');
+        a.href = url; a.download = 'webdark-results.json'; a.click(); URL.revokeObjectURL(url);
+    }
+
+    function showErrorToast(msg) {
+        var t = document.createElement('div'); t.className = 'error-toast';
+        t.innerHTML = msg; document.body.appendChild(t);
+        setTimeout(function() { if (t.parentNode) t.remove(); }, 4000);
+    }
 
     // INIT
-    if(!LS('wd_users',null))LSet('wd_users',[{username:'6263',password:'amir',name:'ادمین'},{username:'7556',password:'7647',name:'دم پختک'},{username:'00000',password:'55555',name:'امیر محمد'}]);
-    if(!LS('wd_exams',null))LSet('wd_exams',[{id:'azmoon-1',Title:'آزمون تستی ۱',Time_in:'00:00',Time_out:'23:59',Time_min:'10',count:'10'},{id:'azmoon-2',Title:'آزمون تستی ۲',Time_in:'08:00',Time_out:'12:00',Time_min:'15',count:'10'}]);
-    if(!LS('wd_results',null))LSet('wd_results',[]);
-    if(!LS('wd_done',null))LSet('wd_done',[]);
+    if (!LS('wd_users', null)) LSet('wd_users', [{username:'6263',password:'amir',name:'ادمین'},{username:'7556',password:'7647',name:'دم پختک'},{username:'00000',password:'55555',name:'امیر محمد'}]);
+    if (!LS('wd_exams', null)) LSet('wd_exams', [{id:'azmoon-1',Title:'آزمون تستی ۱',Time_in:'00:00',Time_out:'23:59',Time_min:'10',count:'10'},{id:'azmoon-2',Title:'آزمون تستی ۲',Time_in:'08:00',Time_out:'12:00',Time_min:'15',count:'10'}]);
+    if (!LS('wd_results', null)) LSet('wd_results', []);
+    if (!LS('wd_done', null)) LSet('wd_done', []);
 </script>
-
 </body>
 </html>
