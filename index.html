@@ -761,46 +761,484 @@
 
         function autoEnd() { state.examFinished = true; clearInterval(state.timerInterval); document.getElementById('timer').textContent = '00:00:00'; showResults(); }
         function endExam() { if (!confirm('مطمئنید؟')) return; state.examFinished = true; clearInterval(state.timerInterval); showResults(); }
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebDark — آزمون آنلاین</title>
+    <meta name="description" content="سامانه هوشمند آزمون آنلاین WebDark — ورود، آزمون، نتایج، و گزارش‌دهی">
+    <meta name="theme-color" content="#0a0f1f">
+    
+    <style>
+        :root {
+            --bg: #0a0f1f;
+            --card: rgba(18, 25, 55, 0.75);
+            --accent: #5f8aff;
+            --green: #3fb950;
+            --red: #f85149;
+            --yellow: #d2991d;
+            --text: #eef3ff;
+            --text2: #8b949e;
+            --border: rgba(100, 150, 255, 0.2);
+            --radius: 1.2rem;
+        }
 
-        function showResults() {
-            let correct = 0, wrong = 0, unanswered = 0;
-            for (let i = 0; i < state.totalQuestions; i++) {
-                const a = state.userAnswers[i];
-                if (!a) unanswered++;
-                else if (a === state.correctKeys[i]) correct++;
-                else wrong++;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .logo span { color: var(--accent); }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 10px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input:focus { border-color: var(--accent); }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            margin-top: 5px;
+            transition: all 0.2s;
+        }
+        button:active { transform: scale(0.97); }
+
+        .btn-primary { background: var(--green); }
+        .btn-danger { background: var(--red); }
+        .btn-accent { background: var(--accent); }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .timer {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 1rem;
+            color: var(--green);
+        }
+        .timer.warning { color: var(--yellow); }
+        .timer.danger { color: var(--red); }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 1rem 0;
+        }
+
+        .opt-btn {
+            padding: 16px;
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .opt-btn.selected {
+            background: var(--green);
+            border-color: var(--green);
+            color: white;
+        }
+
+        .nav-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin: 1rem 0;
+        }
+        .nav-row button {
+            flex: 1;
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .nav-row input {
+            width: 50px;
+            margin: 0;
+        }
+
+        .exam-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 1rem;
+            border: 1px solid var(--border);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .exam-card:hover { border-color: var(--accent); }
+        .exam-card h3 { margin-bottom: 4px; }
+        .exam-card small { color: var(--text2); }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .header button {
+            width: auto;
+            padding: 8px 16px;
+        }
+
+        .banner {
+            background: linear-gradient(135deg, var(--accent), #9147ff);
+            color: white;
+            padding: 1rem;
+            border-radius: var(--radius);
+            text-align: center;
+            margin: 1rem 0;
+            font-weight: bold;
+        }
+        .banner a {
+            color: #fff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .pdf-viewer {
+            width: 100%;
+            height: 350px;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            background: #000;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: var(--text2);
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Particles -->
+    <canvas id="particles"></canvas>
+
+    <div class="container">
+
+        <!-- ========== LOGIN ========== -->
+        <div class="screen active" id="loginScreen">
+            <div class="card" style="text-align:center;">
+                <div class="logo">🌙 Web<span>Dark</span></div>
+                <p style="color:var(--text2);margin-bottom:1.5rem;">سامانه هوشمند آزمون آنلاین</p>
+                <input type="text" id="loginUser" placeholder="نام کاربری" autocomplete="off">
+                <input type="password" id="loginPass" placeholder="رمز عبور" autocomplete="off">
+                <button class="btn-primary" onclick="doLogin()">ورود به آزمون</button>
+                <p id="loginMsg" style="margin-top:8px;font-size:12px;color:var(--text2);min-height:20px;"></p>
+            </div>
+            <div class="banner">
+                📱 <a onclick="alert('نسخه APK به زودی منتشر می‌شود!')">دانلود نسخه اندروید (APK)</a> — تجربه بهتر، ضد تقلب حرفه‌ای!
+            </div>
+            <p class="footer">© 2026 Oraxel WebDark</p>
+        </div>
+
+        <!-- ========== EXAMS ========== -->
+        <div class="screen" id="examsScreen">
+            <div class="header">
+                <h3 id="welcomeText">👤 کاربر</h3>
+                <button class="btn-outline" onclick="doLogout()">خروج</button>
+            </div>
+            <div id="examsList"></div>
+            <div class="banner">
+                📱 نسخه <a onclick="alert('APK به زودی!')">APK</a> با تایمر دقیق و ارسال خودکار نتایج!
+            </div>
+        </div>
+
+        <!-- ========== EXAM ========== -->
+        <div class="screen" id="examScreen">
+            <div class="timer" id="timer">00:00:00</div>
+            <p style="text-align:center;margin-bottom:1rem;" id="questionLabel">سوال ۱ از ۱۰</p>
+            <iframe id="pdfViewer" class="pdf-viewer" src="" frameborder="0"></iframe>
+            <div class="options" id="optionsGrid">
+                <button class="opt-btn" onclick="selectOpt(1)">۱</button>
+                <button class="opt-btn" onclick="selectOpt(2)">۲</button>
+                <button class="opt-btn" onclick="selectOpt(3)">۳</button>
+                <button class="opt-btn" onclick="selectOpt(4)">۴</button>
+            </div>
+            <div class="nav-row">
+                <button onclick="prevQ()">◀</button>
+                <input type="number" id="qNum" value="1" min="1" onchange="goQ()">
+                <button onclick="nextQ()">▶</button>
+            </div>
+            <button class="btn-danger" onclick="endExam()">🏁 اتمام آزمون</button>
+            <button class="btn-accent" style="margin-top:8px;" onclick="backToExams()">↩ بازگشت</button>
+        </div>
+
+        <!-- ========== RESULT ========== -->
+        <div class="screen" id="resultScreen">
+            <div class="card" style="text-align:center;">
+                <h2>📊 نتایج آزمون</h2>
+                <div id="resultContent"></div>
+                <button class="btn-primary" onclick="backToExams()">باشه</button>
+                <button class="btn-accent" style="margin-top:8px;" onclick="downloadJSON()">📥 دانلود نتایج</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ====== STATE ======
+        const S = {
+            user: null, exams: [], curExam: null,
+            q: 1, total: 10, time: 0, timer: null,
+            done: false, answers: [], keys: [], results: []
+        };
+
+        // ====== HELPERS ======
+        const $ = id => document.getElementById(id);
+        const LS = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } };
+        const LSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+
+        function show(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            $(id).classList.add('active');
+        }
+
+        // ====== LOGIN ======
+        function doLogin() {
+            const u = $('loginUser').value.trim();
+            const p = $('loginPass').value.trim();
+            const m = $('loginMsg');
+            if (!u || !p) { m.textContent = 'لطفاً پر کنید'; return; }
+            m.textContent = '⏳';
+
+            let users = LS('webdark_users', [
+                { username: '6263', password: 'amir', name: 'ادمین' },
+                { username: '7556', password: '7647', name: 'دم پختک' },
+                { username: '00000', password: '55555', name: 'امیر محمد' }
+            ]);
+            LSet('webdark_users', users);
+
+            const found = users.find(x => x.username === u && x.password === p);
+            if (found) {
+                S.user = found;
+                $('welcomeText').textContent = `👤 ${found.name}`;
+                show('examsScreen');
+                loadExams();
+            } else {
+                m.textContent = '❌ کاربری یافت نشد';
             }
-            const pct = state.totalQuestions > 0 ? Math.round((correct / state.totalQuestions) * 100) : 0;
+        }
 
-            const result = {
-                user: state.user?.name || '?',
-                username: state.user?.username || '?',
-                exam: state.currentExam?.Title || '?',
-                correct, wrong, unanswered,
-                total: state.totalQuestions,
-                percentage: pct,
+        function doLogout() {
+            S.user = null;
+            show('loginScreen');
+        }
+
+        // ====== EXAMS ======
+        function loadExams() {
+            let exams = LS('webdark_exams', [
+                { id: 'azmoon-1', Title: 'آزمون تستی ۱', Time_in: '00:00', Time_out: '23:59', Bio: 'نمونه آزمون', Time_min: '10', count: '10' },
+                { id: 'azmoon-2', Title: 'آزمون تستی ۲', Time_in: '08:00', Time_out: '12:00', Bio: 'آزمون صبح', Time_min: '15', count: '10' }
+            ]);
+            LSet('webdark_exams', exams);
+            S.exams = exams;
+
+            const c = $('examsList');
+            if (!exams.length) {
+                c.innerHTML = '<p style="text-align:center;color:var(--text2);">📭 آزمونی نیست</p>';
+                return;
+            }
+
+            c.innerHTML = exams.map((e, i) => `
+                <div class="exam-card" onclick="startExam(${i})">
+                    <h3>📋 ${e.Title}</h3>
+                    <small>⏰ ${e.Time_in} — ${e.Time_out} | ⏱ ${e.Time_min}دقیقه | 📝 ${e.count}سوال</small>
+                    ${e.Bio ? `<p style="font-size:12px;color:var(--text2);">${e.Bio.substring(0,60)}</p>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function startExam(i) {
+            const exam = S.exams[i];
+            S.curExam = exam;
+            S.q = 1;
+            S.total = parseInt(exam.count) || 10;
+            S.time = (parseFloat(exam.Time_min) || 10) * 60;
+            S.done = false;
+            S.answers = new Array(S.total).fill('');
+
+            let keys = LS(`keys_${exam.id}`, Array.from({ length: S.total }, () => String(Math.floor(Math.random() * 4) + 1)));
+            LSet(`keys_${exam.id}`, keys);
+            S.keys = keys;
+
+            $('pdfViewer').src = `azmoonha/${exam.id}/soal.pdf`;
+            show('examScreen');
+            updateUI();
+            startTimer();
+        }
+
+        function backToExams() {
+            if (S.timer) clearInterval(S.timer);
+            show('examsScreen');
+            loadExams();
+        }
+
+        // ====== EXAM ======
+        function selectOpt(o) {
+            if (S.done) return;
+            S.answers[S.q - 1] = String(o);
+            updateOpts();
+        }
+
+        function updateOpts() {
+            const sel = S.answers[S.q - 1];
+            document.querySelectorAll('.opt-btn').forEach((b, i) => {
+                b.classList.toggle('selected', String(i + 1) === sel);
+            });
+        }
+
+        function prevQ() { if (S.q > 1) { S.q--; updateUI(); } }
+        function nextQ() { if (S.q < S.total) { S.q++; updateUI(); } }
+        function goQ() {
+            const n = parseInt($('qNum').value);
+            if (n >= 1 && n <= S.total) { S.q = n; updateUI(); }
+        }
+
+        function updateUI() {
+            $('questionLabel').textContent = `سوال ${S.q} از ${S.total}`;
+            $('qNum').value = S.q;
+            updateOpts();
+        }
+
+        function startTimer() {
+            if (S.timer) clearInterval(S.timer);
+            updateTimer();
+            S.timer = setInterval(() => {
+                if (S.time <= 0) { clearInterval(S.timer); autoEnd(); return; }
+                S.time--;
+                updateTimer();
+            }, 1000);
+        }
+
+        function updateTimer() {
+            const h = Math.floor(S.time / 3600);
+            const m = Math.floor((S.time % 3600) / 60);
+            const s = S.time % 60;
+            $('timer').textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            $('timer').className = 'timer' + (S.time < 60 ? ' danger' : S.time < 180 ? ' warning' : '');
+        }
+
+        function autoEnd() { S.done = true; clearInterval(S.timer); $('timer').textContent = '00:00:00'; showResult(); }
+        function endExam() { if (confirm('مطمئنید؟')) { S.done = true; clearInterval(S.timer); showResult(); } }
+
+        function showResult() {
+            let c = 0, w = 0, u = 0;
+            for (let i = 0; i < S.total; i++) {
+                const a = S.answers[i];
+                if (!a) u++;
+                else if (a === S.keys[i]) c++;
+                else w++;
+            }
+            const pct = S.total > 0 ? Math.round((c / S.total) * 100) : 0;
+
+            const r = {
+                user: S.user?.name || '?',
+                username: S.user?.username || '?',
+                exam: S.curExam?.Title || '?',
+                correct: c, wrong: w, unanswered: u,
+                total: S.total, percentage: pct,
                 date: new Date().toISOString()
             };
 
-            state.allResults = LS('allResults', []);
-            state.allResults.push(result);
-            LSset('allResults', state.allResults);
+            S.results = LS('webdark_results', []);
+            S.results.push(r);
+            LSet('webdark_results', S.results);
 
-            document.getElementById('resultContent').innerHTML = `
-                <p>👤 ${result.user}</p>
-                <p>📋 ${result.exam}</p>
+            $('resultContent').innerHTML = `
+                <p>👤 ${r.user}</p>
+                <p>📋 ${r.exam}</p>
                 <hr style="margin:10px 0;border-color:var(--border);">
-                <p>✅ درست: ${correct}</p>
-                <p>❌ غلط: ${wrong}</p>
-                <p>⏭ نزده: ${unanswered}</p>
-                <p>📝 کل: ${state.totalQuestions}</p>
+                <p>✅ درست: ${c}</p>
+                <p>❌ غلط: ${w}</p>
+                <p>⏭ نزده: ${u}</p>
+                <p>📝 کل: ${S.total}</p>
                 <h3 style="margin-top:10px;color:var(--accent);">📈 ${pct}%</h3>
             `;
             show('resultScreen');
         }
 
-        function downloadResults() {
-            const blob = new Blob([JSON.stringify(state.allResults, null, 2)], { type: 'application/json' });
+        function downloadJSON() {
+            const blob = new Blob([JSON.stringify(S.results, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url; a.download = 'webdark-results.json'; a.click();
@@ -811,15 +1249,56 @@
         (function() {
             const c = document.getElementById('particles'), ctx = c.getContext('2d');
             let p = [];
-            function resize() { c.width = innerWidth; c.height = innerHeight; }
-            resize(); addEventListener('resize', resize);
-            class P {
-                constructor() { this.x=Math.random()*c.width; this.y=Math.random()*c.height; this.s=Math.random()*2+.5; this.vx=(Math.random()-.5)*.3; this.vy=(Math.random()-.5)*.3; this.o=Math.random()*.4+.1; }
-                update() { this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>c.width)this.vx*=-1; if(this.y<0||this.y>c.height)this.vy*=-1; }
-                draw() { ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fillStyle=`rgba(120,160,255,${this.o})`; ctx.fill(); }
+            function rs() { c.width = innerWidth; c.height = innerHeight; }
+            rs(); addEventListener('resize', rs);
+            class Pt {
+                constructor() {
+                    this.x = Math.random() * c.width;
+                    this.y = Math.random() * c.height;
+                    this.s = Math.random() * 2 + 0.5;
+                    this.vx = (Math.random() - 0.5) * 0.3;
+                    this.vy = (Math.random() - 0.5) * 0.3;
+                    this.o = Math.random() * 0.4 + 0.1;
+                }
+                up() {
+                    this.x += this.vx; this.y += this.vy;
+                    if (this.x < 0 || this.x > c.width) this.vx *= -1;
+                    if (this.y < 0 || this.y > c.height) this.vy *= -1;
+                }
+                dr() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.s, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(120,160,255,${this.o})`;
+                    ctx.fill();
+                }
             }
-            for(let i=0;i<50;i++) p.push(new P());
-            function animate() { ctx.clearRect(0,0,c.width,c.height); p.forEach(x=>{x.update();x.draw();}); requestAnimationFrame(animate); }
+            for (let i = 0; i < 50; i++) p.push(new Pt());
+            function anim() { ctx.clearRect(0, 0, c.width, c.height); p.forEach(x => { x.up(); x.dr(); }); requestAnimationFrame(anim); }
+            anim();
+        })();
+
+        // ====== INIT ======
+        if (!LS('webdark_users', null)) {
+            LSet('webdark_users', [
+                { username: '6263', password: 'amir', name: 'ادمین' },
+                { username: '7556', password: '7647', name: 'دم پختک' },
+                { username: '00000', password: '55555', name: 'امیر محمد' }
+            ]);
+        }
+        if (!LS('webdark_exams', null)) {
+            LSet('webdark_exams', [
+                { id: 'azmoon-1', Title: 'آزمون تستی ۱', Time_in: '00:00', Time_out: '23:59', Bio: 'نمونه آزمون', Time_min: '10', count: '10' },
+                { id: 'azmoon-2', Title: 'آزمون تستی ۲', Time_in: '08:00', Time_out: '12:00', Bio: 'آزمون صبح', Time_min: '15', count: '10' }
+            ]);
+        }
+        if (!LS('webdark_results', null)) {
+            LSet('webdark_results', []);
+        }
+    </script>
+
+</body>
+</html>
+ationFrame(animate); }
             animate();
         })();
 
